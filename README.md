@@ -1,5 +1,7 @@
 # Native Bridge Android
-This Kotlin library is the native part of a RPC communication bridge between your app and the webview javascript. [To function, it relies on a javascript counterpart to be setup](https://github.com/nrkno/nativebridge/). 
+This Kotlin library is the native part of a RPC communication bridge between your app and the webview javascript. [To function, it relies on a javascript counterpart to be setup](https://github.com/nrkno/nativebridge/).
+
+The library has been tested on Android 4.4.4 and later, but will probably also work on older Android versions.
 
 **Note:** For simplicity, we're using the term *"webview javascript"* to mean *"the javascript hosted in a site shown in the webview"*.
 
