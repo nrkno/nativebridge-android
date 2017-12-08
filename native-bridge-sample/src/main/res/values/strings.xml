@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WebViewBridgeTest</string>
+    <string name="set_url">Set URL</string>
+    <string name="URL">URL</string>
+</resources>
