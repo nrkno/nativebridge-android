@@ -20,7 +20,7 @@ Instead of using ```android.webkit.WebView```, use ```no.nrk.NativeBridgeWebView
 
 For deserializing and serializing data, create classes implementing the ```TopicData.In``` and ```TopicData.Out``` interfaces. ```TopicData.In``` corresponds to the JSON received _from_ the webview javascript, while ```TopicData.Out``` corresponds to the data we want to pass _to_ the webview javascript.
 
-You will then need to add a handler. The handler makes it possible for the native app and the webview javascript to communicate. To do this, use the `nativeBridgeWebView.connection.addHandler(topic: String, callback: (T, WebViewConnection) -> Unit)`. The first parameter, `topic`, is a string that you and the developer responsible for implementing the javascript has agreed on. The webview javascript and the native app use the same `topic` to communicate. The second parameter is a closure, where `T` is your class implementing `TopicData.In`, and `WebViewConnection` is the `webview.connection` that can be used to send `TopicData.Out` to the webview javascript. 
+You will then need to add a handler. The handler makes it possible for the native app and the webview javascript to communicate. To do this, use the `nativeBridgeWebView.connection.addHandler(topic: String, callback: (T, WebViewConnection) -> Unit)` function. The first parameter, `topic`, is a string that you and the developer responsible for implementing the javascript has agreed on. The webview javascript and the native app use the same `topic` to communicate. The second parameter is a closure, where `T` is your class implementing `TopicData.In`, and `WebViewConnection` is the `webview.connection` that can be used to send `TopicData.Out` to the webview javascript. 
 
 #### Example:
 ```kotlin
