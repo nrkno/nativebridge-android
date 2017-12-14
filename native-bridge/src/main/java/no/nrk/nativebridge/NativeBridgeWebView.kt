@@ -8,7 +8,6 @@ import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.exc.InvalidTypeIdException
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 const val TAG = "NativeBridgeAndroid"
@@ -29,8 +28,8 @@ open class NativeBridgeWebView(context: Context, attrs: AttributeSet) : WebView(
             try {
                 val runnableCode = Runnable { connection.receive(json) }
                 handler.post(runnableCode)
-            } catch (e: InvalidTypeIdException){
-                Log.d(TAG, "Type ID '${e.typeId}' not recognized. Ignoring.")
+            } catch (e: Exception){
+                Log.d(TAG, "Unable to handle incoming json. Ignoring.")
             }
         }
     }
