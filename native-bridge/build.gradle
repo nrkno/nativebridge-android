@@ -38,6 +38,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     androidTestCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     compile "com.fasterxml.jackson.core:jackson-core:$jackson"
+    compile "com.fasterxml.jackson.core:jackson-databind:$jackson"
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson"
 }
 
