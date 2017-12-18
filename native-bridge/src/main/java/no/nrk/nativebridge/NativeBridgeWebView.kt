@@ -12,17 +12,32 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 const val TAG = "NativeBridgeAndroid"
 @SuppressLint("SetJavaScriptEnabled")
-open class NativeBridgeWebView(context: Context, attrs: AttributeSet) : WebView(context, attrs), JavascriptExecutor {
+open class NativeBridgeWebView : WebView, JavascriptExecutor {
 
-    val connection: WebViewConnection
-
-    init {
-        connection = WebViewConnection(ObjectMapper().registerModule(KotlinModule())!!, this)
-        settings?.javaScriptEnabled = true
-        addJavascriptInterface(NativeBridgeAndroid(), "NativeBridgeAndroid")
+    constructor(context: Context): super(context) {
+        init()
     }
 
-    private inner class NativeBridgeAndroid {
+    constructor(context: Context, attrs: AttributeSet): super(context, attrs) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int):
+            super(context, attrs, defStyleAttr, defStyleRes) {
+        init()
+    }
+
+    private fun init() {
+        val connection = WebViewConnection(ObjectMapper().registerModule(KotlinModule())!!, this)
+        settings?.javaScriptEnabled = true
+        addJavascriptInterface(NativeBridgeAndroid(connection), "NativeBridgeAndroid")
+    }
+
+    private inner class NativeBridgeAndroid(val connection: WebViewConnection) {
         @JavascriptInterface
         fun send(json: String){
             try {
