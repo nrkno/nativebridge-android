@@ -17,8 +17,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -35,10 +35,11 @@ ext {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    androidTestCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    compile "com.fasterxml.jackson.core:jackson-core:$jackson"
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    api "com.fasterxml.jackson.core:jackson-core:$jackson"
+    api "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson"
 }
 
 apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
