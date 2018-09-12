@@ -1,4 +1,4 @@
-package no.nrk.nativebridge.sample.topicdata;
+package no.nrk.nativebridge.sample.topicdata
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import no.nrk.nativebridge.TopicData

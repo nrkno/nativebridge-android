@@ -18,11 +18,11 @@ class WebViewConnectionTest {
      */
     @Test
     fun testSendSuccessful(){
-        val javascript = getJavaScript("testTopic", TestTopicData.Out("someText"))
+        val expectedJavascript = getJavaScript("testTopic", TestTopicData.Out("someText"))
 
         val connection = WebViewConnection(mapper, object: JavascriptExecutor{
-            override fun executeJavascript(script: String) {
-                assertEquals(javascript, script)
+            override fun executeJavascript(javascript: String) {
+                assertEquals(expectedJavascript, javascript)
             }
         })
 
@@ -35,16 +35,16 @@ class WebViewConnectionTest {
     @Test
     fun testReceiveSuccessful(){
         val connection = WebViewConnection(mapper, object: JavascriptExecutor{
-            override fun executeJavascript(script: String) {
+            override fun executeJavascript(javascript: String) {
                 /** no-op */
             }
         })
 
         val javascript = """{"topic":"testTopic","data":{"text":"someText"}}""".trimIndent()
 
-        connection.addHandler("testTopic", { data: TestTopicData.In, _ ->
+        connection.addHandler("testTopic") { data: TestTopicData.In, _ ->
             assertEquals("someText", data.text)
-        })
+        }
 
         connection.receive(javascript)
     }
@@ -57,8 +57,8 @@ class WebViewConnectionTest {
         val javascript = """{"data":{"key":"value"}}""".trimIndent()
 
         val connection = WebViewConnection(mapper, object: JavascriptExecutor{
-            override fun executeJavascript(script: String) {
-                assertTrue(script.contains(WebViewConnectionError.MissingFieldTopic().message))
+            override fun executeJavascript(javascript: String) {
+                assertTrue(javascript.contains(WebViewConnectionError.MissingFieldTopic().message))
             }
         })
 
@@ -74,8 +74,8 @@ class WebViewConnectionTest {
         val javascript = """{"topic":"testTopic"}""".trimIndent()
 
         val connection = WebViewConnection(mapper, object: JavascriptExecutor{
-            override fun executeJavascript(script: String) {
-                assertTrue(script.contains(WebViewConnectionError.MissingFieldData().message))
+            override fun executeJavascript(javascript: String) {
+                assertTrue(javascript.contains(WebViewConnectionError.MissingFieldData().message))
             }
         })
 
@@ -90,8 +90,8 @@ class WebViewConnectionTest {
         val javascript = """abc""".trimIndent()
 
         val connection = WebViewConnection(mapper, object: JavascriptExecutor{
-            override fun executeJavascript(script: String) {
-                assertTrue(script.contains(WebViewConnectionError.IllegalPayloadFormat().message))
+            override fun executeJavascript(javascript: String) {
+                assertTrue(javascript.contains(WebViewConnectionError.IllegalPayloadFormat().message))
             }
         })
 
@@ -106,8 +106,8 @@ class WebViewConnectionTest {
         val javascript = """{"topic":"invalid","data":{"key":"value"}}""".trimIndent()
 
         val connection = WebViewConnection(mapper, object: JavascriptExecutor{
-            override fun executeJavascript(script: String) {
-                assertTrue(script.contains(""""topic":"invalid""") && script.contains(WebViewConnectionError.MissingTopicHandler().message))
+            override fun executeJavascript(javascript: String) {
+                assertTrue(javascript.contains(""""topic":"invalid""") && javascript.contains(WebViewConnectionError.MissingTopicHandler().message))
             }
         })
 
@@ -121,17 +121,17 @@ class WebViewConnectionTest {
     @Test
     fun testInvalidDataForHandlerShouldReturnError(){
         val connection = WebViewConnection(mapper, object: JavascriptExecutor{
-            override fun executeJavascript(script: String) {
-                assertTrue(script.contains(""""topic":"testTopic"""")
-                        && script.contains(WebViewConnectionError.InvalidDataForTopicHandler("testTopic").message))
+            override fun executeJavascript(javascript: String) {
+                assertTrue(javascript.contains(""""topic":"testTopic"""")
+                        && javascript.contains(WebViewConnectionError.InvalidDataForTopicHandler("testTopic").message))
             }
         })
 
         val javascript = """{"topic":"testTopic","data":{"texttt":"someTextForInvalidKey"}}""".trimIndent()
 
-        connection.addHandler("testTopic", { _: TestTopicData.In, _ ->
+        connection.addHandler("testTopic") { _: TestTopicData.In, _ ->
             /** no-op */
-        })
+        }
 
         connection.receive(javascript)
     }
