@@ -14,80 +14,40 @@
  * limitations under the License.
  */
 
-apply plugin: 'maven'
-apply plugin: 'signing'
+apply plugin: 'maven-publish'
 
-def isReleaseBuild() {
-    return !VERSION_NAME.contains("SNAPSHOT")
+def getGitHash() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }
 
-def getRepositoryUsername() {
-    return hasProperty('SONATYPE_NEXUS_USERNAME') ? SONATYPE_NEXUS_USERNAME : ""
-}
+def runId = System.getenv("GITHUB_RUN_NUMBER") ?: "0"
 
-def getRepositoryPassword() {
-    return hasProperty('SONATYPE_NEXUS_PASSWORD') ? SONATYPE_NEXUS_PASSWORD : ""
-}
+def versionNumber = "1.0.${runId}-${getGitHash()}" as String
 
-afterEvaluate { project ->
-    uploadArchives {
+afterEvaluate {
+    publishing {
+        publications {
+            mavenPublish(MavenPublication) {
+                groupId 'no.nrk'
+                artifactId 'nativebridge'
+                version = versionNumber
+            }
+        }
+
         repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                pom.groupId = GROUP
-                pom.artifactId = POM_ARTIFACT_ID
-                pom.version = VERSION_NAME
-
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
-                }
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
-                }
-
-                pom.project {
-                    name POM_NAME
-                    packaging POM_PACKAGING
-                    description POM_DESCRIPTION
-                    url POM_URL
-
-                    scm {
-                        url POM_SCM_URL
-                        connection POM_SCM_CONNECTION
-                        developerConnection POM_SCM_DEV_CONNECTION
-                    }
-
-                    licenses {
-                        license {
-                            name POM_LICENCE_NAME
-                            url POM_LICENCE_URL
-                            distribution POM_LICENCE_DIST
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id POM_DEVELOPER_ID
-                            name POM_DEVELOPER_NAME
-                        }
-                    }
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/nrkno/nativebridge-android"
+                credentials {
+                    username System.getenv("GITHUB_ACTOR")
+                    password System.getenv("GITHUB_TOKEN")
                 }
             }
         }
-    }
-
-    signing {
-        required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-        sign configurations.archives
-    }
-
-    task androidSourcesJar(type: Jar) {
-        classifier = 'sources'
-        from android.sourceSets.main.java.sourceFiles
-    }
-
-    artifacts {
-        archives androidSourcesJar
     }
 }

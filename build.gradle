@@ -1,10 +1,10 @@
 buildscript {
-    ext.kotlin_version = '1.2.61'
-    ext.build_gradle_version = '3.1.4'
+    ext.kotlin_version = '1.8.22'
+    ext.build_gradle_version = '8.0.2'
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -16,7 +16,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
