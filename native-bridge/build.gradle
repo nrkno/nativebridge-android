@@ -1,9 +1,8 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -12,15 +11,21 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 27
+    namespace 'no.nrk.nativebridge'
+    compileSdk 33
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 27
-        versionCode 2
-        versionName "1.0.1"
+        targetSdkVersion 33
+        versionCode 3
+        versionName "1.0.2"
+        multiDexEnabled true
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     lintOptions {
