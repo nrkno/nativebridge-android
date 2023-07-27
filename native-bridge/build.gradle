@@ -1,5 +1,19 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'maven-publish'
+
+def getGitHash() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def runId = System.getenv("GITHUB_RUN_NUMBER") ?: "0"
+
+def versionNumber = "1.0.${runId}-${getGitHash()}" as String
 
 buildscript {
     repositories {
@@ -18,8 +32,7 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 33
-        versionCode 3
-        versionName "1.0.2"
+        versionName "$versionNumber"
         multiDexEnabled true
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -47,4 +60,25 @@ dependencies {
     api "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson"
 }
 
-apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
+afterEvaluate {
+    publishing {
+        publications {
+            mavenPublish(MavenPublication) {
+                groupId 'no.nrk'
+                artifactId 'nativebridge'
+                version = versionNumber
+            }
+        }
+
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/nrkno/nativebridge-android"
+                credentials {
+                    username System.getenv("GITHUB_ACTOR")
+                    password System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+    }
+}
