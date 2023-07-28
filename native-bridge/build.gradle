@@ -63,7 +63,8 @@ dependencies {
 afterEvaluate {
     publishing {
         publications {
-            mavenPublish(MavenPublication) {
+            release(MavenPublication) {
+                from components.release
                 groupId 'no.nrk'
                 artifactId 'nativebridge'
                 version = versionNumber
